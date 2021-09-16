@@ -1,0 +1,389 @@
+//kelas utama
+
+package javagame;
+import javax.swing.JOptionPane;
+import java.util.Random;
+
+public class Main{
+    public static void main(String[] args) {
+        int  pilihan, bound = 10, berhenti = 1, nextstep = 0;
+        String nama, nama1, nama2,pilih;
+
+
+
+
+        pilih = JOptionPane.showInputDialog(null, "input 1 untuk bermain sendiri \n" +
+                "input 2 untuk bermain berdua ");
+        pilihan = Integer.parseInt(pilih);
+
+
+
+        switch (pilihan){
+        case 1 :
+
+                nama = JOptionPane.showInputDialog(null, "nama Player  ");
+                MONSTER monster = new MONSTER(nama);
+                monster.rules();
+                  do {
+                monster.tarung(10);
+                monster.cek();
+                monster.situasi();
+
+                if((monster.getDarahMonster()<=0)||(monster.getDarahPlayer()<=0)){
+                    berhenti=0;
+                }
+
+            } while (berhenti != 0);
+
+            break;
+            case 2:
+
+            nama1 = JOptionPane.showInputDialog(null, "nama Player 1 ");
+            nama2 = JOptionPane.showInputDialog(null, "nama Player 2 ");
+
+            PLAYER play = new PLAYER(nama1, nama2);
+            play.rules();
+
+            do {
+                nextstep++;
+                if (nextstep == 10) {
+                    bound = bound + 5;
+                }
+                if (nextstep == 20) {
+                    bound = bound + 10;
+                }
+
+                play.tarung(bound);
+                play.cek();
+                play.situasi();
+
+                if ((play.getJarak1() <= 0) || (play.getJarak2() <= 0)) {
+                    berhenti = 0;
+                }
+
+            } while (berhenti != 0);
+
+            play.finish();
+
+            break;
+            default:
+                System.out.println("pilihan salah");
+    }
+
+        }
+    }
+    
+    
+    
+    
+    //kelas game
+    
+    package javagame;
+import javax.print.DocFlavor;
+import javax.swing.*;
+import java.util.*;
+
+class game{
+    Random acak = new Random();
+    public String jawab;
+    public int n=10;
+
+}
+
+
+
+class MONSTER extends game {
+
+    public String nama;
+    private int hasil;
+    private int jawaban;
+    private int darahPlayer = n;
+    private int darahMonster = n;
+
+
+    public MONSTER(String nama) {
+        this.nama = nama;
+
+    }
+
+    public int getHasil() {
+        return hasil;
+    }
+
+    public void setHasil(int hasil) {
+        this.hasil = hasil;
+    }
+
+    public Random getAcak() {
+        return acak;
+    }
+
+    public void setAcak(Random acak) {
+        this.acak = acak;
+    }
+
+    public int getJawaban() {
+        return jawaban;
+    }
+
+    public void setJawaban(int jawaban) {
+        this.jawaban = jawaban;
+    }
+
+    public int getDarahPlayer() {
+        return darahPlayer;
+    }
+
+    public void setDarahPlayer(int darah) {
+        this.darahPlayer = darah;
+    }
+
+    public int getDarahMonster() {
+        return darahMonster;
+    }
+
+    public void setDarahMonster(int darahMonster) {
+        this.darahMonster = darahMonster;
+    }
+
+    public void rules() {
+        JOptionPane.showMessageDialog(null,
+                "selamat datang di permainan Ambil Darah Monster ," +
+                        " \n pemain harus menjawab semua pertanyaan perkalian \n" +
+                        "perkalian merupakan perkalian digit 10 \n" +
+                        " jika ingin menjadi juara usahakan anda tidak menjawab dengan salah\n" +
+                        " dan jangan sampai darah anda habis,\n" +
+                        " selamat bertarung *** " + this.nama + " ***");
+    }
+
+    public void tarung(int bound) {
+        int angkaPertama = 1 + acak.nextInt(bound);
+        int angkaKedua = 1 + acak.nextInt(bound);
+
+        this.jawab = JOptionPane.showInputDialog(null, this.nama + " menjawab !!!!! \n" + angkaPertama + " * " + angkaKedua + " = ");
+        this.jawaban = Integer.parseInt(this.jawab);
+        this.hasil = angkaPertama * angkaKedua;
+
+    }
+
+
+    public void cek() {
+
+        if (this.jawaban == this.hasil) {
+            System.out.println("✵✵✵ Player menyerang Monster ✵✵✵\n");
+            this.darahPlayer = this.darahPlayer + 2;
+            this.darahMonster = this.darahMonster - 2;
+        } else {
+            System.out.println("✵✵✵ Monster menyerang Player ✵✵✵\n");
+            this.darahMonster = this.darahMonster + 2;
+            this.darahPlayer = this.darahPlayer - 2;
+        }
+
+    }
+
+    public void situasi() {
+
+        String Monster =  (char)27+"[01;31m "+"( ▀ 益 ▀ )", p1 =(char)27+"[01;35m "+"(｀◕‸◕´ )", blood =(char)27+"[01;33m "+"\"❤\"",
+                area = (char)27+"[01;33m "+"!_____________________________________________" +
+                        "___________________________________________" +
+                        "___________________________________________" +
+                        "______________________________________!\n";
+
+
+        System.out.print("           ");
+
+        if (this.darahPlayer > 0) {
+            System.out.print(p1);
+            for (int i = 0; i < this.darahPlayer; i++) {
+                System.out.print(blood);
+            }
+        } else {
+            System.out.println(this.nama + " dikalahkan MONSTER," + this.nama + " KALAH ⌛");
+        }
+
+        System.out.print("                  ♊                   ");
+
+        if (this.darahMonster > 0) {
+            for (int i = 0; i < this.darahMonster; i++) {
+                System.out.print(blood);
+            }
+            System.out.print(Monster);
+        } else {
+            System.out.println(this.nama + " mengalahkan MONSTER , " + this.nama + " MENANG ⌛");
+        }
+
+        System.out.println("\n" + area);
+        System.out.println("Player = " + this.darahPlayer + " (\"❤\") " + this.darahMonster + " = Monster");
+
+    }
+}
+
+
+
+
+ class PLAYER extends game{
+
+     public String nama1;
+     public String nama2;
+     private int hasil1;
+     private int hasil2;
+     private int jawaban1;
+     private int jawaban2;
+     private int jarak1=n;
+     private int jarak2=n;
+
+     public PLAYER(String nama1, String nama2) {
+         this.nama1 = nama1;
+         this.nama2 = nama2;
+     }
+
+     public int getHasil1() {
+         return hasil1;
+     }
+
+     public void setHasil1(int hasil1) {
+         this.hasil1 = hasil1;
+     }
+
+     public int getHasil2() {
+         return hasil2;
+     }
+
+     public void setHasil2(int hasil2) {
+         this.hasil2 = hasil2;
+     }
+
+     public int getJawaban1() {
+
+         return jawaban1;
+     }
+
+     public void setJawaban1(int jawaban1) {
+
+         this.jawaban1 = jawaban1;
+     }
+
+     public int getJawaban2() {
+         return jawaban2;
+     }
+
+     public void setJawaban2(int jawaban2) {
+         this.jawaban2 = jawaban2;
+     }
+
+     public int getJarak1() {
+         return jarak1;
+     }
+
+     public void setJarak1(int jarak1) {
+         this.jarak1 = jarak1;
+     }
+
+     public int getJarak2() {
+         return jarak2;
+     }
+
+     public void setJarak2(int jarak2) {
+         this.jarak2 = jarak2;
+     }
+
+     public void rules(){
+         JOptionPane.showMessageDialog(null,
+                 "selamat datang di permainan Jangan Mengganggu Monster Tidur ," +
+                         " \n pemain harus menjawab semua pertanyaan perkalian secara bergantian\n" +
+                         "perkalian merupakan perkalian digit 10 \n" +
+                         "dan akan bertambah 5 jika permainan belum selesai dalam 10 kali menjawab \n" +
+                         "dan bertambah 5 lagi setelah 20 kali menjawab \n" +
+                         " jika ingin menjadi juara pastikan anda tidak menjawab dengan salah ,\n" +
+                         " selamat bertarung *** "+this.nama1+" VS "+this.nama2+" ***");
+     }
+
+     public void tarung(int bound){
+         int angkaPertama=1+acak.nextInt(bound);
+         int angkaKedua=1+acak.nextInt(bound);
+
+        this.jawab=JOptionPane.showInputDialog(null,this.nama1+" menjawab !!!!! \n"+angkaPertama+" * "+angkaKedua+" = ");
+        this.jawaban1=Integer.parseInt(this.jawab);
+        this.hasil1=angkaPertama*angkaKedua;
+
+          angkaPertama=1+acak.nextInt(10);
+          angkaKedua=1+acak.nextInt(10);
+
+         this.jawab=JOptionPane.showInputDialog(null,this.nama2+" menjawab !!!!! \n"+angkaPertama+" * "+angkaKedua+" = ");
+         this.jawaban2=Integer.parseInt(this.jawab);
+         this.hasil2=angkaPertama*angkaKedua;
+    }
+
+
+     public void cek() {
+
+             if (this.jawaban1 == this.hasil1) {
+                 if(this.jarak1<n){
+                     this.jarak1=this.jarak1+2;
+             }}
+
+         if (this.jawaban1 != this.hasil1) {
+             this.jarak1 = this.jarak1 - 2;
+         }
+
+
+         if (this.jawaban2 == this.hasil2) {
+             if(this.jarak2<n) {
+                    this.jarak2=this.jarak2+2;
+                }}
+         if (this.jawaban2 != this.hasil2) {
+             this.jarak2 = this.jarak2 - 2;
+         }
+     }
+
+     public void situasi(){
+
+         String monster=(char)27+"[01;31m"+"(☠ ▀ 益 ▀ ☠)",p1=(char)27+"[01;32m"+"{1(｀◕‸◕´ )+==>",p2=(char)27+"[01;34m"+"(｀☸▂☸´ )2}",
+                 area=(char)27+"001;33m"+"!_________________________________________________________________________________!";
+
+
+         System.out.print("     ");
+         System.out.print(p1);
+         for (int i = 0; i < this.jarak1; i++) {
+             System.out.print(" ");
+         }
+
+         System.out.print(monster);
+
+         for (int i = 0; i < this.jarak2; i++) {
+             System.out.print(" ");
+         }
+         System.out.print(p2);
+
+         System.out.println("\n" + area);
+         System.out.println(this.jarak1+" ( m ) "+this.jarak2);
+
+     }
+
+     public void finish(){
+         if(this.jarak1>1){
+             System.out.println(this.nama1+" menang ==>> karena mampu bertahan");
+             JOptionPane.showMessageDialog(null,this.nama1+" selamat anda berhasil bertahan dan menang\n ***** congratulation *****  ");
+         }
+         else{
+             System.out.println(this.nama1+" kalah ==>> karena telah mengganggu monster tidur");
+         }
+         if(this.jarak2>1){
+             System.out.println(this.nama2+" menang ==>> karena mampu bertahan");
+             JOptionPane.showMessageDialog(null,this.nama2+" selamat anda berhasil bertahan dan menang\n ***** congratulation *****  ");
+         }
+         else{
+             System.out.println(this.nama2+" kalah  ==>> karena telah mengganggu monster tidur");
+         }
+
+     }
+
+ }
+
+
+
+
+
+    
+    
+    
